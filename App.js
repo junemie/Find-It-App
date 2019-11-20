@@ -1,19 +1,65 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import { AppLoading } from 'expo';
+import * as  Font from 'expo-font';
+import { Asset } from 'expo-asset';
+import Icon from 'react-native-vector-icons/Ionicons';
+import NavigationTab from './Components/Navigation/NavigationTab';
+import styled from 'styled-components';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+const Container = styled.View`
+  flex: 1;
+  background-color: #fff;
+`;
+
+export default class App extends React.Component {
+  state = {
+    isLoading: false
+  }
+
+  static propTypes = {
+    isLoading: PropTypes.bool
+  }
+
+  static defaultPorps = {
+    isLoading: false
+  }
+
+  handleLoadAssets = async () => {
+    return Promise.all([
+      Asset.loadAsync([
+        require('./assets/rocket.png'),
+        require('./assets/rocket-prod.png'),
+      ]),
+      Font.loadAsync({
+        ...Icon.Ionicons.font,
+      }),
+    ]);
+  };
+
+  handleLoadError = error => {
+    console.warn(error);
+  };
+
+  handleLoadFinished = () => {
+    this.setState({ isLoading: true });
+  };
+
+  render() {
+    !this.state.isLoading &&
+      <AppLoading
+        startAsync={this.handleLoadAssets}
+        onFinish={this.handleLoadError}
+        onError={this.handleLoadFinished}
+      />
+
+    return (
+      <Container>
+        <NavigationTab></NavigationTab>
+      </Container >
+    )
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
