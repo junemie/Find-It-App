@@ -3,7 +3,7 @@ import { createMaterialBottomTabNavigator } from "react-navigation-material-bott
 import { createStackNavigator } from 'react-navigation';
 import TabBarIcon from '../TabBarIcon';
 import { HomeScreen, WikiResults, WikiSingleResult, BookmarkScreen } from '../Screen'
-
+import Colors from '../../constants/Colors'
 const HomeBar = createStackNavigator({
   Home: HomeScreen,
   WikiResults: WikiResults,
@@ -37,4 +37,8 @@ BookmarkBar.navigationOptions = ({
 export default NavigationTab = createMaterialBottomTabNavigator({
   HomeBar,
   BookmarkBar,
-})
+}, {
+    activeTintColor: Colors.selected
+  })
+
+
