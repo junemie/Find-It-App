@@ -5,6 +5,7 @@ import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as ImagePicker from 'expo-image-picker';
 import CameraScreen from './CameraScreen';
+import HomeButtonIcon from '../HomeButtonIcon';
 // import { ImagePicker, Permissions } from 'expo'
 
 const Container = styled.View`
@@ -28,11 +29,18 @@ const TITLE_LABEL = "Select options to start your search"
 class HomeScreen extends React.Component {
 
 
-  handleCamera= async () =>{
-    const {cancelled, uri, base64} = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      base64: true
-    })
+  // handleCamera = async () => {
+  //   const { cancelled, uri, base64 } = await ImagePicker.launchCameraAsync({
+  //     allowsEditing: true,
+  //     base64: true
+  //   })
+  // }
+  handleCamera = () => {
+    this.props.navigation.navigate("Camera");
+  }
+
+  handlePickPhoto = () => {
+    console.log("pick a photo");
   }
 
   render() {
@@ -42,23 +50,15 @@ class HomeScreen extends React.Component {
         style={styles.container}
       >
         <Container>
-        <Header>{HEADER_LABEL}</Header>
+          <Header>{HEADER_LABEL}</Header>
           <Title>{TITLE_LABEL}</Title>
-          <Button
+          <HomeButtonIcon
             title="CAMERA"
-            titleStyle={{fontSize:16, color:"#a6f3ff"}}
-            type="outline"
-            containerStyle={{marginTop:30}}
-            buttonStyle={{width:160, borderColor:"#a6f3ff"}}
-            onPress={this.handleCamera}
+            handleCamera={this.handleCamera}
           />
-          <Button
+          <HomeButtonIcon
             title="PHOTO"
-            titleStyle={{fontSize:16, color:"#a6f3ff"}}
-            type="outline"
-            iconRight={true}
-            containerStyle={{marginTop:30}}
-            buttonStyle={{width:160, borderColor:"#a6f3ff"}}
+            handleCamera={this.handlePickPhoto}
           />
         </Container>
       </ImageBackground>

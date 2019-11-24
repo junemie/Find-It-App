@@ -2,7 +2,7 @@ const tintColor = '#FFC733';
 
 export default {
   tintColor,
-  default: '#ccc',
+  defaultColor: '#ccc',
   selected: tintColor,
   tabBar: '#fefefe',
   errorBackground: 'red',
@@ -11,4 +11,5 @@ export default {
   warningText: '#666804',
   noticeBackground: tintColor,
   noticeText: '#fff',
+  lightBlue: "#a6f3ff"
 }

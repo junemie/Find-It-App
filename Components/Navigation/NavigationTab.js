@@ -2,10 +2,11 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createStackNavigator } from 'react-navigation';
 import TabBarIcon from '../TabBarIcon';
-import { HomeScreen, WikiResults, WikiSingleResult, BookmarkScreen } from '../Screen'
+import { HomeScreen, WikiResults, WikiSingleResult, BookmarkScreen, CameraScreen } from '../Screen'
 import Colors from '../../constants/Colors'
 const HomeBar = createStackNavigator({
   Home: HomeScreen,
+  Camera: CameraScreen,
   WikiResults: WikiResults,
   WikiSingleResult: WikiSingleResult
 })

@@ -22,7 +22,8 @@
 
 import React, { Component } from "react";
 import { View, AsyncStorage, Text, TouchableOpacity } from "react-native";
-import { Permissions } from "expo";
+import * as Permissions from "expo-permissions";
+import { Camera } from 'expo-camera';
 
 export default class CameraScreen extends Component {
   state = {
