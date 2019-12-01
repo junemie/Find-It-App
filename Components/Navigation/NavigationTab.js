@@ -1,14 +1,17 @@
 import React from 'react';
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
-import { createStackNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import TabBarIcon from '../TabBarIcon';
-import { HomeScreen, WikiResults, WikiSingleResult, BookmarkScreen, CameraScreen } from '../Screen'
+import { HomeScreen, WikiResult, BookmarkScreen, PhotoScreen } from '../Screen'
 import Colors from '../../constants/Colors'
+import { connect } from 'react-redux';
+import { updateCurrentImage, clearImage, getWiki } from '../../store/reducer';
+
 const HomeBar = createStackNavigator({
   Home: HomeScreen,
-  Camera: CameraScreen,
-  WikiResults: WikiResults,
-  WikiSingleResult: WikiSingleResult
+  PhotoScreen: PhotoScreen,
+  WikiResult: WikiResult,
+  // WikiSingleResult: WikiSingleResult
 })
 
 HomeBar.navigationOptions = ({
@@ -35,11 +38,32 @@ BookmarkBar.navigationOptions = ({
   )
 })
 
-export default NavigationTab = createMaterialBottomTabNavigator({
+const BottomTab = createBottomTabNavigator({
   HomeBar,
   BookmarkBar,
 }, {
     activeTintColor: Colors.selected
   })
+
+NavigationContainer = createAppContainer(BottomTab);
+
+const NavigationTab = props => {
+  return (
+    <NavigationContainer screenProps={props} />
+  )
+}
+
+const mapStateToProps = state => ({
+  currentImage: state.currentImage,
+  currentWiki: { snipped: state.currentWiki.snipped, url: state.currentWiki.url },
+  bookmarks: state.bookmarks,
+})
+
+const mapDispatchToProps = dispatch => ({
+  updateCurrentImage: uri => dispatch(updateCurrentImage(uri)),
+  clearImage: dispatch(clearImage),
+  getWiki: landmark => dispatch(getWiki(landmark))
+})
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationTab);
 
 

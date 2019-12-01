@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Text, View } from 'react-native';
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import { View } from 'react-native';
 import { Provider } from 'react-redux'
 import { AppLoading } from 'expo';
 import * as  Font from 'expo-font';
 import { Asset } from 'expo-asset';
 import Icon from 'react-native-vector-icons/Ionicons';
-import NavigationTab from './Components/Navigation/NavigationTab';
 import styled from 'styled-components';
 import store from './store/index';
+import NavigationTab from './Components/Navigation/NavigationTab';
 
 const Container = styled.View`
   flex: 1;
@@ -60,10 +59,9 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <Container>
-          <NavigationTab></NavigationTab>
+          <NavigationTab />
         </Container >
       </Provider>
     )
   }
 }
-

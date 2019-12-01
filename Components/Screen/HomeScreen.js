@@ -1,12 +1,22 @@
+<script src="http://localhost:8097"></script>
+XMLHttpRequest = GLOBAL.originalXMLHttpRequest ?
+  GLOBAL.originalXMLHttpRequest : GLOBAL.XMLHttpRequest;
 import React from "react";
 import { StyleSheet, View, Text, ImageBackground } from 'react-native';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as ImagePicker from 'expo-image-picker';
-import CameraScreen from './CameraScreen';
+import PropTypes from 'prop-types';
+import PhotoScreen from './PhotoScreen';
+import * as Permissions from "expo-permissions";
+import Enviroment from '../../config/environment';
+import { TouchableOpacity } from "react-native-gesture-handler";
+
 import HomeButtonIcon from '../HomeButtonIcon';
-// import { ImagePicker, Permissions } from 'expo'
+import LoadingScreen from './LoadingScreen';
+
 
 const Container = styled.View`
   flex: 1;
@@ -23,54 +33,160 @@ const Title = styled.Text`
   font-size: 15;
   color: white;
 `
+
 const HEADER_LABEL = "FIND IT APP"
 const TITLE_LABEL = "Select options to start your search"
+const ERROR_MESSAGE = "Whoops! Something went wrong. Try again!"
 
-class HomeScreen extends React.Component {
+export class HomeScreen extends React.Component {
 
-
-  // handleCamera = async () => {
-  //   const { cancelled, uri, base64 } = await ImagePicker.launchCameraAsync({
-  //     allowsEditing: true,
-  //     base64: true
-  //   })
-  // }
-  handleCamera = () => {
-    this.props.navigation.navigate("Camera");
+  state = {
+    status: null,
+    results: null,
+    base64: null,
   }
 
-  handlePickPhoto = () => {
-    console.log("pick a photo");
+  static propTypes = {
+    status: PropTypes.bool,
+    results: PropTypes.bool
+  }
+
+  static defaultProps = {
+    status: null,
+    results: null,
+  }
+
+  handleCamera = async () => {
+    const { cancelled, uri, base64 } = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      base64: true
+    })
+    if (!cancelled) {
+      this.props.screenProps.updateCurrentImage(uri);
+      this.handleImagePicked(base64);
+    }
+  }
+
+  handlePickPhoto = async () => {
+    const { cancelled, uri, base64 } = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      base64: true
+    });
+
+    const { updateCurrentImage, getWiki } = this.props.screenProps;
+
+    if (!cancelled) {
+      updateCurrentImage(uri);
+      this.handleImagePicked(base64);
+    }
+  }
+
+  handleImagePicked = async base64 => {
+    try {
+      const body = {
+        requests: [
+          {
+            image: { content: base64 },
+            features: [
+              // { type: 'LABEL_DETECTION', maxResults: 10 },
+              { type: 'LANDMARK_DETECTION', maxResults: 10 },
+              // { type: 'WEB_DETECTION', maxResults: 10 }
+            ]
+          }
+        ]
+      }
+
+      const key = Enviroment.GOOGLE_CLOUD_VISION_API_KEY;
+
+      const response = await fetch(
+        `https://vision.googleapis.com/v1/images:annotate?key=${key}`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }
+      )
+      const { responses } = await response.json();
+      const landmark = responses[0].landmarkAnnotations[0].description;
+      this.setState({
+        landmark: landmark
+      })
+      console.log('responding ----->', responses[0].landmarkAnnotations[0]);
+      console.log('WIKIIII', landmark);
+      this.setState({
+        status: 'Retrieved'
+      })
+    } catch (error) {
+      alert(ERROR_MESSAGE);
+    }
+  }
+
+  goToWikiResult = async () => {
+    let { getWiki } = this.props.screenProps;
+    let { landmark } = this.state;
+
+    this.setState({
+      status: 'Analyzing...'
+    })
+    const wikipedia = await getWiki(landmark);
+    console.log('WIKIPEDIAAAAAA', wikipedia)
+
+
+  }
+
+  async componentDidMount() {
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    await Permissions.askAsync(Permissions.CAMERA);
+  }
+
+  handleLoading = () => {
+    if (this.state.status === 'Analyzing...') {
+      return (
+        <LoadingScreen
+          status={this.state.status}
+        />
+      )
+    }
   }
 
   render() {
+    let { currentImage, clearImage } = this.props.screenProps;
+    let { status } = this.state;
+
     return (
-      <ImageBackground
-        source={require("../../assets/background.png")}
-        style={styles.container}
-      >
-        <Container>
-          <Header>{HEADER_LABEL}</Header>
-          <Title>{TITLE_LABEL}</Title>
-          <HomeButtonIcon
-            title="CAMERA"
-            handleCamera={this.handleCamera}
+      <View style={{ flex: 1 }}>
+        {currentImage ? (
+          <PhotoScreen
+            {...this.state}
+            imageUri={currentImage}
+            clearImage={clearImage}
+            goToWikiResult={this.goToWikiResult}
           />
-          <HomeButtonIcon
-            title="PHOTO"
-            handleCamera={this.handlePickPhoto}
-          />
-        </Container>
-      </ImageBackground>
+        ) :
+          <ImageBackground
+            source={require("../../assets/background.png")}
+            style={{ flex: 1 }}
+          >
+            <Container>
+              <Header>{HEADER_LABEL}</Header>
+              <Title>{TITLE_LABEL}</Title>
+              <HomeButtonIcon
+                title="CAMERA"
+                handleCamera={this.handleCamera}
+              />
+              <HomeButtonIcon
+                title="PHOTO"
+                handleCamera={this.handlePickPhoto}
+              />
+            </Container>
+          </ImageBackground>
+        }
+        {this.handleLoading()}
+      </View>
     );
   }
-}
+};
 
-export default HomeScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
