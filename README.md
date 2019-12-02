@@ -1,7 +1,7 @@
 # Find It App
 
 <p align="center">
-  <img src="https://imgur.com/TiaQDZ9"/>
+  <img src="https://i.imgur.com/TiaQDZ9.jpg"/>
 </p>
 
 ##About
