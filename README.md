@@ -43,7 +43,7 @@ var Environment = getEnvironment(getReleaseChannel());
 export default Environment;
 ```
 
-4. `npm start` to open the application
+4. `expo start` to open the application
 
 ## Technologies
 * React Native 
