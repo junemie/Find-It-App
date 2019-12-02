@@ -1,14 +1,14 @@
 # Find It App
 
 <p align="center">
-  <img src="https://media.giphy.com/media/JtBOaYsRNX7trkl6I9/giphy.gif"/>
+  <img src="https://i.imgur.com/TiaQDZ9.jpg"/>
 </p>
 
 ## About
 A React Native mobile app built with React Navtive and Expo. This application uses image recognition technology Google Cloud Vision API to identify landmarks with great accuracy. Once the image has been processed and identified, user is directed to Wikipedia page using WikiMedia API.
 
 <p align="center">
-   <img src="https://media.giphy.com/media/KBaQ6H4zEAzTwsLvge/giphy.gif">
+   <img src="https://media.giphy.com/media/JtBOaYsRNX7trkl6I9/giphy.gif">
 </p>
 
 ## How to run locally
