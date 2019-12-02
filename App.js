@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 import { AppLoading } from 'expo';
 import * as  Font from 'expo-font';
 import { Asset } from 'expo-asset';
 import Icon from 'react-native-vector-icons/Ionicons';
 import styled from 'styled-components';
 import store from './store/index';
-import NavigationTab from './Components/Navigation/NavigationTab';
+import NavigationTab from './components/Navigation/NavigationTab';
 
 const Container = styled.View`
   flex: 1;
