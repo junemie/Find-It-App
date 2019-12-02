@@ -1,30 +1,21 @@
 import React from 'react';
-import {
-  View,
-  Image,
-  ImageBackground,
-  TouchableOpacity
-} from 'react-native';
-import { Icon } from 'expo';
+import { View, ImageBackground, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { clearImage, getWiki } from '../../store/reducer';
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons';
 
 export class PhotoScreen extends React.Component {
   render() {
     const {
-      results,
       imageUri,
-      keyExtractor,
-      renderItem,
       startOver,
-      status,
       goToWikiResult,
     } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
+
         <ImageBackground
           style={{ flex: 1, width: undefined, height: undefined }}
           resizeMode='cover'
@@ -49,14 +40,14 @@ export class PhotoScreen extends React.Component {
   }
 }
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   startOver: () => dispatch(clearImage()),
   getWiki: () => dispatch(getWiki())
-})
+});
 
 export default withNavigation(
   connect(
     null,
     mapDispatchToProps
   )(PhotoScreen)
-)
+);

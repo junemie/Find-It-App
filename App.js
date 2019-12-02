@@ -31,7 +31,8 @@ export default class App extends React.Component {
   handleLoadAssets = async () => {
     return Promise.all([
       Asset.loadAsync([
-        require('./assets/rocket.png'),
+        require('./assets/background.png'),
+        require('./assets/background2.png'),
         require('./assets/rocket-prod.png'),
       ]),
       Font.loadAsync({

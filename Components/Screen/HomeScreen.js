@@ -1,19 +1,11 @@
-<script src="http://localhost:8097"></script>
-XMLHttpRequest = GLOBAL.originalXMLHttpRequest ?
-  GLOBAL.originalXMLHttpRequest : GLOBAL.XMLHttpRequest;
-import React from "react";
-import { StyleSheet, View, Text, ImageBackground } from 'react-native';
-import { connect } from 'react-redux';
+import React from 'react';
+import { View, Text, ImageBackground } from 'react-native';
 import styled from 'styled-components';
-import { Button } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome'
 import * as ImagePicker from 'expo-image-picker';
 import PropTypes from 'prop-types';
 import PhotoScreen from './PhotoScreen';
-import * as Permissions from "expo-permissions";
+import * as Permissions from 'expo-permissions';
 import Enviroment from '../../config/environment';
-import { TouchableOpacity } from "react-native-gesture-handler";
-
 import HomeButtonIcon from '../HomeButtonIcon';
 import LoadingScreen from './LoadingScreen';
 
@@ -22,28 +14,29 @@ const Container = styled.View`
   flex: 1;
   alignItems: center;
   margin-top: 200px;
-`
+`;
+
 const Header = styled.Text`
   font-size: 26;
   font-weight: bold;
   color: white;
   margin-bottom: 20;
-`
+`;
+
 const Title = styled.Text`
   font-size: 15;
   color: white;
-`
+`;
 
-const HEADER_LABEL = "FIND IT APP"
-const TITLE_LABEL = "Select options to start your search"
-const ERROR_MESSAGE = "Whoops! Something went wrong. Try again!"
+const HEADER_LABEL = 'FIND IT APP';
+const TITLE_LABEL = 'Select options to start your search';
 
 export class HomeScreen extends React.Component {
 
   state = {
     status: null,
     results: null,
-    base64: null,
+    landmark: ''
   }
 
   static propTypes = {
@@ -60,12 +53,14 @@ export class HomeScreen extends React.Component {
     const { cancelled, uri, base64 } = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       base64: true
-    })
+    });
+
     if (!cancelled) {
       this.props.screenProps.updateCurrentImage(uri);
       this.handleImagePicked(base64);
     }
-  }
+
+  };
 
   handlePickPhoto = async () => {
     const { cancelled, uri, base64 } = await ImagePicker.launchImageLibraryAsync({
@@ -73,7 +68,7 @@ export class HomeScreen extends React.Component {
       base64: true
     });
 
-    const { updateCurrentImage, getWiki } = this.props.screenProps;
+    const { updateCurrentImage } = this.props.screenProps;
 
     if (!cancelled) {
       updateCurrentImage(uri);
@@ -88,13 +83,11 @@ export class HomeScreen extends React.Component {
           {
             image: { content: base64 },
             features: [
-              // { type: 'LABEL_DETECTION', maxResults: 10 },
-              { type: 'LANDMARK_DETECTION', maxResults: 10 },
-              // { type: 'WEB_DETECTION', maxResults: 10 }
+              { type: 'LANDMARK_DETECTION', maxResults: 10 }
             ]
           }
         ]
-      }
+      };
 
       const key = Enviroment.GOOGLE_CLOUD_VISION_API_KEY;
 
@@ -109,32 +102,52 @@ export class HomeScreen extends React.Component {
           body: JSON.stringify(body)
         }
       )
+
       const { responses } = await response.json();
       const landmark = responses[0].landmarkAnnotations[0].description;
-      this.setState({
-        landmark: landmark
-      })
-      console.log('responding ----->', responses[0].landmarkAnnotations[0]);
-      console.log('WIKIIII', landmark);
-      this.setState({
-        status: 'Retrieved'
-      })
+
+      if (landmark) {
+        this.setState({
+          landmark: landmark
+        });
+        this.setState({
+          status: 'Retrieved'
+        });
+      } else {
+        this.setState({
+          status: 'Error'
+        });
+      }
     } catch (error) {
-      alert(ERROR_MESSAGE);
+      this.setState({
+        status: 'Error'
+      });
     }
   }
 
   goToWikiResult = async () => {
-    let { getWiki } = this.props.screenProps;
-    let { landmark } = this.state;
+    let { getWiki, currentWiki } = this.props.screenProps;
+    let { landmark, status } = this.state;
 
-    this.setState({
-      status: 'Analyzing...'
-    })
-    const wikipedia = await getWiki(landmark);
-    console.log('WIKIPEDIAAAAAA', wikipedia)
+    if (status === 'Error' || landmark === undefined) {
+      this.props.navigation.navigate('ErrorScreen');
+    } else {
+      this.setState({
+        status: 'Analyzing...'
+      });
 
+      await getWiki(landmark);
 
+      if (currentWiki) {
+        this.setState({
+          status: 'Retrieved'
+        });
+        this.props.navigation.navigate('WikiResultScreen', {
+          landmarkName: landmark
+        });
+      }
+
+    }
   }
 
   async componentDidMount() {
@@ -148,13 +161,12 @@ export class HomeScreen extends React.Component {
         <LoadingScreen
           status={this.state.status}
         />
-      )
+      );
     }
   }
 
   render() {
     let { currentImage, clearImage } = this.props.screenProps;
-    let { status } = this.state;
 
     return (
       <View style={{ flex: 1 }}>
@@ -167,18 +179,18 @@ export class HomeScreen extends React.Component {
           />
         ) :
           <ImageBackground
-            source={require("../../assets/background.png")}
+            source={require('../../assets/background.png')}
             style={{ flex: 1 }}
           >
             <Container>
               <Header>{HEADER_LABEL}</Header>
               <Title>{TITLE_LABEL}</Title>
               <HomeButtonIcon
-                title="CAMERA"
+                title='CAMERA'
                 handleCamera={this.handleCamera}
               />
               <HomeButtonIcon
-                title="PHOTO"
+                title='PHOTO'
                 handleCamera={this.handlePickPhoto}
               />
             </Container>
@@ -188,5 +200,5 @@ export class HomeScreen extends React.Component {
       </View>
     );
   }
-};
+}
 

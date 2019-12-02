@@ -1,6 +1,6 @@
 import React from 'react';
-import Icon from 'react-native-vector-icons/Ionicons'
-import Colors from '../constants/Colors'
+import Icon from 'react-native-vector-icons/Ionicons';
+import Colors from '../constants/Colors';
 
 export default TabBarIcon = (props) => {
   const { defaultColor, selected } = Colors;

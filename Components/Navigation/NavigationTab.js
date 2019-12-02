@@ -1,18 +1,16 @@
 import React from 'react';
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import TabBarIcon from '../TabBarIcon';
-import { HomeScreen, WikiResult, BookmarkScreen, PhotoScreen } from '../Screen'
-import Colors from '../../constants/Colors'
+import { HomeScreen, WikiResultScreen, PhotoScreen, ErrorScreen } from '../Screen';
+import Colors from '../../constants/Colors';
 import { connect } from 'react-redux';
 import { updateCurrentImage, clearImage, getWiki } from '../../store/reducer';
 
 const HomeBar = createStackNavigator({
-  Home: HomeScreen,
-  PhotoScreen: PhotoScreen,
-  WikiResult: WikiResult,
-  // WikiSingleResult: WikiSingleResult
-})
+  HomeScreen,
+  PhotoScreen,
+  ErrorScreen,
+});
 
 HomeBar.navigationOptions = ({
   tabBarLabel: 'Home',
@@ -21,49 +19,50 @@ HomeBar.navigationOptions = ({
       focused={focused}
       name='ios-home'
     />
-  )
-})
+  ),
+  tabBarOptions: { activeTintColor: 'black' }
+});
 
-const BookmarkBar = createStackNavigator({
-  Bookmarks: BookmarkScreen
-})
+const Web = createStackNavigator({
+  WikiResultScreen
+});
 
-BookmarkBar.navigationOptions = ({
-  tabBarLabel: 'Bookmark',
+Web.navigationOptions = ({
+  tabBarLabel: 'Wiki',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name='ios-bookmark'
+      name='md-keypad'
     />
-  )
-})
+  ),
+  tabBarOptions: { activeTintColor: 'black' }
+});
+
 
 const BottomTab = createBottomTabNavigator({
   HomeBar,
-  BookmarkBar,
+  Web,
 }, {
     activeTintColor: Colors.selected
-  })
+  });
 
-NavigationContainer = createAppContainer(BottomTab);
+const NavigationContainer = createAppContainer(BottomTab);
 
 const NavigationTab = props => {
   return (
     <NavigationContainer screenProps={props} />
-  )
-}
+  );
+};
 
 const mapStateToProps = state => ({
   currentImage: state.currentImage,
-  currentWiki: { snipped: state.currentWiki.snipped, url: state.currentWiki.url },
-  bookmarks: state.bookmarks,
-})
+  currentWiki: { snipped: state.currentWiki.snipped, url: state.currentWiki.url }
+});
 
 const mapDispatchToProps = dispatch => ({
   updateCurrentImage: uri => dispatch(updateCurrentImage(uri)),
   clearImage: dispatch(clearImage),
   getWiki: landmark => dispatch(getWiki(landmark))
-})
+});
+
 export default connect(mapStateToProps, mapDispatchToProps)(NavigationTab);
-
-

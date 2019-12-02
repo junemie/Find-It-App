@@ -1,8 +1,7 @@
-import React from "react";
+import React from 'react';
 import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
-import styled from 'styled-components';
 
-export default LoadingScreen = (props) => (
+const LoadingScreen = (props) => (
   <View
     style={[
       StyleSheet.absoluteFill,
@@ -16,7 +15,7 @@ export default LoadingScreen = (props) => (
     <ActivityIndicator color="#fff" animating size="large" />
     <Text style={StyleSheet.status}>{props.status}</Text>
   </View>
-)
+);
 
 StyleSheet.create({
   status: {
@@ -25,4 +24,6 @@ StyleSheet.create({
     lineHeight: 24,
     textAlign: 'center'
   }
-})
+});
+
+export default LoadingScreen;
