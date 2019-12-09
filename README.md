@@ -7,6 +7,8 @@
 ## About
 A React Native mobile app built with React Native and Expo. This application uses image recognition technology Google Cloud Vision API to identify landmarks with great accuracy. Once the image has been processed and identified, user is directed to Wikipedia page using WikiMedia API.
 
+The user can either take the photo or pick an existing image from their phone to use the app.
+
 <p align="center">
    <img src="https://media.giphy.com/media/JtBOaYsRNX7trkl6I9/giphy.gif">
 </p>
